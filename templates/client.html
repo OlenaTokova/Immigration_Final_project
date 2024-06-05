@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .age-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .age-container span {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .child-fields {
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        function calculateAge() {
+            const dob = document.getElementById('date_of_birth').value;
+            if (dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                document.getElementById('age').innerText = `Age: ${age}`;
+            }
+        }
+
+        function updateChildrenFields() {
+            const numberOfChildren = document.getElementById('number_of_children').value;
+            const childrenFieldsContainer = document.getElementById('children_fields');
+            childrenFieldsContainer.innerHTML = '';
+
+            for (let i = 0; i < numberOfChildren; i++) {
+                const childFieldSet = document.createElement('div');
+                childFieldSet.className = 'child-fields';
+                childFieldSet.innerHTML = `
+                    <label>Child ${i + 1} - First Name</label>
+                    <input type="text" name="children-${i}-first_name" required>
+                    <label>Child ${i + 1} - Last Name</label>
+                    <input type="text" name="children-${i}-last_name" required>
+                    <label>Child ${i + 1} - Date of Birth (mm/dd/yyyy)</label>
+                    <input type="date" name="children-${i}-date_of_birth" required>
+                `;
+                childrenFieldsContainer.appendChild(childFieldSet);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            document.getElementById('number_of_children').addEventListener('input', updateChildrenFields);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Client Information</h1>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <label for="full_name">{{ form.full_name.label }}</label>
+            {{ form.full_name() }}
+            <label for="alien_registration_number">{{ form.alien_registration_number.label }}</label>
+            {{ form.alien_registration_number() }}
+            <label for="uscis_online_account_number">{{ form.uscis_online_account_number.label }}</label>
+            {{ form.uscis_online_account_number() }}
+            <div class="age-container">
+                <div>
+                    <label for="date_of_birth">{{ form.date_of_birth.label }}</label>
+                    {{ form.date_of_birth(onchange="calculateAge()") }}
+                </div>
+                <span id="age">Age: </span>
+            </div>
+            <label for="country_of_birth">{{ form.country_of_birth.label }}</label>
+            {{ form.country_of_birth() }}
+            <label for="country_of_citizenship">{{ form.country_of_citizenship.label }}</label>
+            {{ form.country_of_citizenship() }}
+            <label for="ssn">{{ form.ssn.label }}</label>
+            {{ form.ssn() }}
+            <label for="gender">{{ form.gender.label }}</label>
+            {{ form.gender() }}
+            <label for="marital_status">{{ form.marital_status.label }}</label>
+            {{ form.marital_status() }}
+            <label for="number_of_children">{{ form.number_of_children.label }}</label>
+            {{ form.number_of_children(oninput="updateChildrenFields()") }}
+            <div id="children_fields"></div>
+            <label for="physical_address">{{ form.physical_address.label }}</label>
+            {{ form.physical_address() }}
+            <label for="mailing_address">{{ form.mailing_address.label }}</label>
+            {{ form.mailing_address() }}
+            <label for="telephone_number">{{ form.telephone_number.label }}</label>
+            {{ form.telephone_number() }}
+            <label for="email_address">{{ form.email_address.label }}</label>
+            {{ form.email_address() }}
+            <label for="residential_history">{{ form.residential_history.label }}</label>
+            {{ form.residential_history() }}
+            <label for="employment_status">{{ form.employment_status.label }}</label>
+            {{ form.employment_status() }}
+            <label for="current_employer_name_address">{{ form.current_employer_name_address.label }}</label>
+            {{ form.current_employer_name_address() }}
+            <label for="job_title">{{ form.job_title.label }}</label>
+            {{ form.job_title() }}
+            <label for="start_date_current_job">{{ form.start_date_current_job.label }}</label>
+            {{ form.start_date_current_job() }}
+            <label for="employment_history">{{ form.employment_history.label }}</label>
+            {{ form.employment_history() }}
+            <label for="previous_us_visas">{{ form.previous_us_visas.label }}</label>
+            {{ form.previous_us_visas() }}
+            <label for="previous_us_entries">{{ form.previous_us_entries.label }}</label>
+            {{ form.previous_us_entries() }}
+            <label for="deportation_history">{{ form.deportation_history.label }}</label>
+            {{ form.deportation_history() }}
+            <label for="criminal_history">{{ form.criminal_history.label }}</label>
+            {{ form.criminal_history() }}
+            <label for="political_social_orgs">{{ form.political_social_orgs.label }}</label>
+            {{ form.political_social_orgs() }}
+            <label for="languages_spoken">{{ form.languages_spoken.label }}</label>
+            {{ form.languages_spoken() }}
+            <label for="emergency_contact">{{ form.emergency_contact.label }}</label>
+            {{ form.emergency_contact() }}
+            <label for="other_citizenship">{{ form.other_citizenship.label }}</label>
+            {{ form.other_citizenship() }}
+            <label for="travel_purpose">{{ form.travel_purpose.label }}</label>
+            {{ form.travel_purpose() }}
+            <label for="countries_to_visit">{{ form.countries_to_visit.label }}</label>
+            {{ form.countries_to_visit() }}
+            <label for="length_of_trip">{{ form.length_of_trip.label }}</label>
+            {{ form.length_of_trip() }}
+            <label for="intended_departure_date">{{ form.intended_departure_date.label }}</label>
+            {{ form.intended_departure_date() }}
+            <label for="travel_document_type">{{ form.travel_document_type.label }}</label>
+            {{ form.travel_document_type() }}
+            <label for="summary">{{ form.summary.label }}</label>
+            {{ form.summary() }}
+            <button type="submit">Submit</button>
+        </form>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>

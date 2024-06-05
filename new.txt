@@ -1,0 +1,25 @@
+project_root/
+│
+├── app.py
+├── config.py
+├── templates/
+│   ├── home.html
+│   ├── visa.html
+│   ├── immigrant_visas.html
+│   ├── non_immigrant_visas.html
+│   ├── client.html
+│   ├── applications.html
+│   ├── online_helper.html
+│   └── online_helper_result.html
+└── static/
+    └── log.png
+
+
+
+
+Summary
+Data Collection: Gather comprehensive information about U.S. immigration laws and policies.
+Model Training: Fine-tune a language model with annotated data.
+Rule-Based System: Implement a rule-based system for straightforward queries.
+API Integration: Develop an API to interact with the AI model and rule-based system.
+Web Integration: Integrate the API with your web application to provide real-time advice.

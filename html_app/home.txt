@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immigration Consulting Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        img {
+            width: 200px;
+            height: auto;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='log.png') }}" alt="Logo">
+        <h1>Welcome to Immigration Consulting Services</h1>
+        <h2>Our main idea is to help you and support you in achieving your dreams.</h2>
+        <a href="{{ url_for('visa') }}" class="btn">Visa Information</a>
+        <a href="{{ url_for('client') }}" class="btn">Client Information</a>
+        <a href="{{ url_for('applications') }}" class="btn">View Applications</a>
+    </div>
+</body>
+</html>

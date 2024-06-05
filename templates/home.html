@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Immigration Consulting Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+        }
+        .block {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .block:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='log.png') }}" alt="Logo" class="logo">
+        <h1>Welcome to Immigration Consulting Services</h1>
+        <p>Our main idea is to help you and support you...</p>
+        <a href="{{ url_for('visa') }}" class="block">Visa Information</a>
+        <a href="{{ url_for('client_info') }}" class="block">Client Information</a>
+        <a href="{{ url_for('applications') }}" class="block">View Applications</a>
+        <a href="{{ url_for('online_helper') }}" class="block">Online Helper</a>
+        <a href="{{ url_for('voice_recorder') }}" class="block">Record Voice</a>
+    </div>
+</body>
+</html>

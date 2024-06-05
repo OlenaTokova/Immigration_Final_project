@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Immigrant Visas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .visa-category {
+            margin-bottom: 20px;
+        }
+        .visa-category h2 {
+            color: #007bff;
+        }
+        .visa-category p {
+            margin: 10px 0;
+        }
+        .box {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .box:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Non-Immigrant Visas</h1>
+
+        <div class="visa-category">
+            <h2>Business/Tourism</h2>
+            <h3>B-1: Business Visitor</h3>
+            <p><strong>Documents:</strong> Form DS-160, passport, visa fee receipt, invitation letter from U.S. business, proof of ties to home country, etc.</p>
+            <p><strong>Application Process:</strong> Complete DS-160, schedule and attend visa interview, provide supporting documents.</p>
+
+            <h3>B-2: Tourist Visitor</h3>
+            <p><strong>Documents:</strong> Form DS-160, passport, visa fee receipt, proof of ties to home country, travel itinerary, etc.</p>
+            <p><strong>Application Process:</strong> Complete DS-160, schedule and attend visa interview, provide supporting documents.</p>
+        </div>
+
+        <div class="visa-category">
+            <h2>Work</h2>
+            <h3>H-1B: Specialty Occupations</h3>
+            <p><strong>Documents:</strong> Form I-129, job offer from U.S. employer, proof of qualifications, LCA (Labor Condition Application), etc.</p>
+            <p><strong>Application Process:</strong> Employer files Form I-129; if approved, schedule visa interview.</p>
+
+            <h3>L-1: Intracompany Transferee</h3>
+            <p><strong>Documents:</strong> Form I-129, proof of employment with multinational company, job offer in U.S., etc.</p>
+            <p><strong>Application Process:</strong> Employer files Form I-129; if approved, schedule visa interview.</p>
+        </div>
+
+        <div class="visa-category">
+            <h2>Student/Exchange Visitor</h2>
+            <h3>F-1: Academic Student</h3>
+            <p><strong>Documents:</strong> Form I-20, SEVIS fee receipt, Form DS-160, passport, financial support documents, etc.</p>
+            <p><strong>Application Process:</strong> Complete DS-160, pay SEVIS fee, schedule visa interview, provide supporting documents.</p>
+
+            <h3>J-1: Exchange Visitor</h3>
+            <p><strong>Documents:</strong> Form DS-2019, SEVIS fee receipt, Form DS-160, passport, proof of ties to home country, etc.</p>
+            <p><strong>Application Process:</strong> Complete DS-160, pay SEVIS fee, schedule visa interview, provide supporting documents.</p>
+        </div>
+
+        <a href="{{ url_for('visa') }}" class="box">Back to Visa Information</a>
+    </div>
+</body>
+</html>

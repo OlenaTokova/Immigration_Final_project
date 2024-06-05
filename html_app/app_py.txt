@@ -1,0 +1,227 @@
+import os
+from flask import Flask, render_template, url_for, flash, redirect, request, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, DateField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from wtforms import StringField, DateField, TextAreaField, SubmitField, SelectField, SelectMultipleField, IntegerField, FieldList, FormField
+from wtforms.validators import DataRequired, InputRequired
+from datetime import datetime
+import pycountry
+
+
+app = Flask(__name__)
+app.config.from_object('config.Config')
+db = SQLAlchemy(app)
+
+
+# Utility function to generate a list of countries
+def get_country_list():
+    return [(country.name, country.name) for country in pycountry.countries]
+
+# Utility function to generate a list of languages
+def get_language_list():
+    return [(lang.name, lang.name) for lang in pycountry.languages if hasattr(lang, 'name')]
+
+class ChildForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    date_of_birth = DateField('Date of Birth (mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
+
+class ClientForm(FlaskForm):
+    full_name = StringField('Full Name', validators=[DataRequired()])
+    alien_registration_number = StringField('Alien Registration Number')
+    uscis_online_account_number = StringField('USCIS Online Account Number')
+    date_of_birth = DateField('Date of Birth (mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
+    country_of_birth = SelectField('Country of Birth', choices=get_country_list(), validators=[DataRequired()])
+    country_of_citizenship = SelectField('Country of Citizenship', choices=get_country_list(), validators=[DataRequired()])
+    ssn = StringField('U.S. Social Security Number')
+    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
+    marital_status = SelectField('Marital Status', choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced'), ('Widowed', 'Widowed')], validators=[DataRequired()])
+    number_of_children = IntegerField('Number of Children', validators=[InputRequired()])
+    children = FieldList(FormField(ChildForm), min_entries=0)
+    physical_address = TextAreaField('Current Physical Address', validators=[DataRequired()])
+    mailing_address = TextAreaField('Mailing Address')
+    telephone_number = StringField('Telephone Number')
+    email_address = StringField('Email Address')
+    residential_history = TextAreaField('Residential History')
+    employment_status = StringField('Employment Status')
+    current_employer_name_address = TextAreaField('Current Employer Name and Address')
+    job_title = StringField('Job Title')
+    start_date_current_job = StringField('Start Date of Current Job')
+    employment_history = TextAreaField('Employment History')
+    previous_us_visas = TextAreaField('Previous U.S. Visas')
+    previous_us_entries = TextAreaField('Previous U.S. Entries')
+    deportation_history = TextAreaField('Deportation History')
+    criminal_history = TextAreaField('Criminal History')
+    political_social_orgs = TextAreaField('Political or Social Organizations')
+    languages_spoken = SelectMultipleField('Languages Spoken', choices=get_language_list(), validators=[DataRequired()])
+    emergency_contact = TextAreaField('Emergency Contact')
+    other_citizenship = TextAreaField('Other Countries of Citizenship')
+    travel_purpose = TextAreaField('Purpose of Travel')
+    countries_to_visit = TextAreaField('Countries to Visit')
+    length_of_trip = TextAreaField('Expected Length of Trip')
+    intended_departure_date = StringField('Date of Intended Departure')
+    travel_document_type = StringField('Travel Document Type')
+    summary = TextAreaField('Summary')
+    submit = SubmitField('Submit')
+
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100), nullable=False)
+    alien_registration_number = db.Column(db.String(100))
+    uscis_online_account_number = db.Column(db.String(100))
+    date_of_birth = db.Column(db.String(100), nullable=False)
+    country_of_birth = db.Column(db.String(100), nullable=False)
+    country_of_citizenship = db.Column(db.String(100), nullable=False)
+    ssn = db.Column(db.String(100))
+    gender = db.Column(db.String(10))
+    marital_status = db.Column(db.String(20))
+    spouse_full_name = db.Column(db.String(100))
+    marriage_date = db.Column(db.String(100))
+    number_of_children = db.Column(db.Integer)
+    children_names_dobs = db.Column(db.Text)
+    physical_address = db.Column(db.Text, nullable=False)
+    mailing_address = db.Column(db.Text)
+    telephone_number = db.Column(db.String(15))
+    email_address = db.Column(db.String(100))
+    residential_history = db.Column(db.Text)
+    employment_status = db.Column(db.String(100))
+    current_employer_name_address = db.Column(db.Text)
+    job_title = db.Column(db.String(100))
+    start_date_current_job = db.Column(db.String(100))
+    employment_history = db.Column(db.Text)
+    previous_us_visas = db.Column(db.Text)
+    previous_us_entries = db.Column(db.Text)
+    deportation_history = db.Column(db.Text)
+    criminal_history = db.Column(db.Text)
+    political_social_orgs = db.Column(db.Text)
+    languages_spoken = db.Column(db.Text)
+    emergency_contact = db.Column(db.Text)
+    other_citizenship = db.Column(db.Text)
+    travel_purpose = db.Column(db.Text)
+    countries_to_visit = db.Column(db.Text)
+    length_of_trip = db.Column(db.Text)
+    intended_departure_date = db.Column(db.String(100))
+    travel_document_type = db.Column(db.String(100))
+    summary = db.Column(db.Text)
+
+
+def create_pdf(client):
+    pdf_file = os.path.join('client_applications', f'{client.full_name.replace(" ", "_")}.pdf')
+    c = canvas.Canvas(pdf_file, pagesize=letter)
+    c.drawString(100, 750, f"Full Name: {client.full_name}")
+    c.drawString(100, 735, f"Alien Registration Number: {client.alien_registration_number}")
+    c.drawString(100, 720, f"USCIS Online Account Number: {client.uscis_online_account_number}")
+    c.drawString(100, 705, f"Date of Birth: {client.date_of_birth}")
+    c.drawString(100, 690, f"Country of Birth: {client.country_of_birth}")
+    c.drawString(100, 675, f"Country of Citizenship: {client.country_of_citizenship}")
+    c.drawString(100, 660, f"U.S. Social Security Number: {client.ssn}")
+    c.drawString(100, 645, f"Gender: {client.gender}")
+    c.drawString(100, 630, f"Marital Status: {client.marital_status}")
+    c.drawString(100, 615, f"Number of Children: {client.number_of_children}")
+    for i, child in enumerate(client.children):
+        c.drawString(100, 600 - i * 15, f"Child {i+1} - Name: {child.first_name} {child.last_name}, Date of Birth: {child.date_of_birth}")
+    c.drawString(100, 540, f"Current Physical Address: {client.physical_address}")
+    c.drawString(100, 525, f"Mailing Address: {client.mailing_address}")
+    c.drawString(100, 510, f"Telephone Number: {client.telephone_number}")
+    c.drawString(100, 495, f"Email Address: {client.email_address}")
+    c.drawString(100, 480, f"Residential History: {client.residential_history}")
+    c.drawString(100, 465, f"Employment Status: {client.employment_status}")
+    c.drawString(100, 450, f"Current Employer Name and Address: {client.current_employer_name_address}")
+    c.drawString(100, 435, f"Job Title: {client.job_title}")
+    c.drawString(100, 420, f"Start Date of Current Job: {client.start_date_current_job}")
+    c.drawString(100, 405, f"Employment History: {client.employment_history}")
+    c.drawString(100, 390, f"Previous U.S. Visas: {client.previous_us_visas}")
+    c.drawString(100, 375, f"Previous U.S. Entries: {client.previous_us_entries}")
+    c.drawString(100, 360, f"Deportation History: {client.deportation_history}")
+    c.drawString(100, 345, f"Criminal History: {client.criminal_history}")
+    c.drawString(100, 330, f"Political or Social Organizations: {client.political_social_orgs}")
+    c.drawString(100, 315, f"Languages Spoken: {', '.join(client.languages_spoken)}")
+    c.drawString(100, 300, f"Emergency Contact: {client.emergency_contact}")
+    c.drawString(100, 285, f"Other Countries of Citizenship: {client.other_citizenship}")
+    c.drawString(100, 270, f"Purpose of Travel: {client.travel_purpose}")
+    c.drawString(100, 255, f"Countries to Visit: {client.countries_to_visit}")
+    c.drawString(100, 240, f"Expected Length of Trip: {client.length_of_trip}")
+    c.drawString(100, 225, f"Date of Intended Departure: {client.intended_departure_date}")
+    c.drawString(100, 210, f"Travel Document Type: {client.travel_document_type}")
+    c.drawString(100, 195, f"Summary: {client.summary}")
+    c.save()
+    return pdf_file
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/visa')
+def visa():
+    return render_template('visa.html')
+
+@app.route('/visa/immigrant')
+def immigrant_visas():
+    return render_template('immigrant_visas.html')
+
+@app.route('/visa/non-immigrant')
+def non_immigrant_visas():
+    return render_template('non_immigrant_visas.html')
+
+@app.route('/client', methods=['GET', 'POST'])
+def client():
+    form = ClientForm()
+    if form.validate_on_submit():
+        client = Client(
+            full_name=form.full_name.data,
+            alien_registration_number=form.alien_registration_number.data,
+            uscis_online_account_number=form.uscis_online_account_number.data,
+            date_of_birth=form.date_of_birth.data,
+            country_of_birth=form.country_of_birth.data,
+            country_of_citizenship=form.country_of_citizenship.data,
+            ssn=form.ssn.data,
+            gender=form.gender.data,
+            marital_status=form.marital_status.data,
+            spouse_full_name=form.spouse_full_name.data,
+            marriage_date=form.marriage_date.data,
+            number_of_children=form.number_of_children.data,
+            children_names_dobs=form.children_names_dobs.data,
+            physical_address=form.physical_address.data,
+            mailing_address=form.mailing_address.data,
+            telephone_number=form.telephone_number.data,
+            email_address=form.email_address.data,
+            residential_history=form.residential_history.data,
+            employment_status=form.employment_status.data,
+            current_employer_name_address=form.current_employer_name_address.data,
+            job_title=form.job_title.data,
+            start_date_current_job=form.start_date_current_job.data,
+            employment_history=form.employment_history.data,
+            previous_us_visas=form.previous_us_visas.data,
+            previous_us_entries=form.previous_us_entries.data,
+            deportation_history=form.deportation_history.data,
+            criminal_history=form.criminal_history.data,
+            political_social_orgs=form.political_social_orgs.data,
+            languages_spoken=form.languages_spoken.data,
+            emergency_contact=form.emergency_contact.data,
+            other_citizenship=form.other_citizenship.data,
+            travel_purpose=form.travel_purpose.data,
+            countries_to_visit=form.countries_to_visit.data,
+            length_of_trip=form.length_of_trip.data,
+            intended_departure_date=form.intended_departure_date.data,
+            travel_document_type=form.travel_document_type.data,
+            summary=form.summary.data,
+        )
+        db.session.add(client)
+        db.session.commit()
+        pdf_file = create_pdf(client)
+        flash('Client information has been saved!', 'success')
+        return send_from_directory(directory='client_applications', path=pdf_file, as_attachment=True)
+    return render_template('client.html', form=form)
+
+@app.route('/applications')
+def applications():
+    pdf_path = 'C:/Users/Elena/Documents/GitHub/Imigration_project_new_res/Addition_information'
+    pdf_files = [f for f in os.listdir(pdf_path) if f.endswith('.pdf')]
+    return render_template('applications.html', pdf_files=pdf_files, pdf_path=pdf_path)
+
+if __name__ == '__main__':
+    app.run(debug=True)

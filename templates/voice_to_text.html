@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice to Text and Translation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .block {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .block:hover {
+            background-color: #0056b3;
+        }
+        .window {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            margin-top: 10px;
+            overflow-y: auto;
+        }
+        select {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice to Text and Translation</h1>
+        <label for="spoken-language">Select Spoken Language:</label>
+        <select id="spoken-language">
+            <option value="en-US">English</option>
+            <option value="bg-BG">Bulgarian</option>
+            <option value="uk-UA">Ukrainian</option>
+            <option value="es-ES">Spanish</option>
+            <option value="pl-PL">Polish</option>
+        </select>
+
+        <label for="target-language">Select Target Language:</label>
+        <select id="target-language">
+            <option value="en">English</option>
+            <option value="bg">Bulgarian</option>
+            <option value="uk">Ukrainian</option>
+            <option value="es">Spanish</option>
+            <option value="pl">Polish</option>
+        </select>
+
+        <button class="block" onclick="startRecording()">Start Recording</button>
+        <button class="block" onclick="pauseRecording()">Pause</button>
+        <button class="block" onclick="stopRecording()">Stop</button>
+
+        <h2>Transcription:</h2>
+        <div id="transcription" class="window"></div>
+
+        <h2>Translation:</h2>
+        <div id="translation" class="window"></div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let recognition;
+
+        function startRecording() {
+            if (!isRecording) {
+                const spokenLanguage = document.getElementById("spoken-language").value;
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    isRecording = true;
+
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks);
+                        const formData = new FormData();
+                        formData.append("audio", audioBlob, "recording.wav");
+
+                        fetch("/transcribe", {
+                            method: "POST",
+                            body: formData
+                        }).then(response => response.json())
+                          .then(data => {
+                              document.getElementById("transcription").innerText = data.transcription;
+
+                              // Automatically translate to the desired language
+                              const targetLanguage = document.getElementById("target-language").value;
+                              fetch("/translate", {
+                                  method: "POST",
+                                  headers: {
+                                      "Content-Type": "application/json"
+                                  },
+                                  body: JSON.stringify({
+                                      text: data.transcription,
+                                      target_language: targetLanguage
+                                  })
+                              }).then(response => response.json())
+                                .then(data => {
+                                    document.getElementById("translation").innerText = data.translation;
+                                }).catch(error => console.error("Error translating text:", error));
+                          }).catch(error => console.error("Error transcribing audio:", error));
+                    });
+                });
+
+                // Setup real-time speech recognition
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = spokenLanguage;
+                recognition.interimResults = true;
+
+                recognition.onresult = event => {
+                    const transcript = Array.from(event.results)
+                        .map(result => result[0])
+                        .map(result => result.transcript)
+                        .join('');
+                    
+                    document.getElementById("transcription").innerText = transcript;
+
+                    // Automatically translate to the desired language
+                    const targetLanguage = document.getElementById("target-language").value;
+                    fetch("/translate", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            text: transcript,
+                            target_language: targetLanguage
+                        })
+                    }).then(response => response.json())
+                      .then(data => {
+                          document.getElementById("translation").innerText = data.translation;
+                      }).catch(error => console.error("Error translating text:", error));
+                };
+
+                recognition.start();
+            }
+        }
+
+        function pauseRecording() {
+            if (isRecording && mediaRecorder.state === "recording") {
+                mediaRecorder.pause();
+                recognition.stop();
+            }
+        }
+
+        function stopRecording() {
+            if (isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                audioChunks = [];
+                recognition.stop();
+            }
+        }
+    </script>
+</body>
+</html>

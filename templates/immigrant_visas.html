@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immigrant Visas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .visa-category {
+            margin-bottom: 20px;
+        }
+        .visa-category h2 {
+            color: #007bff;
+        }
+        .visa-category p {
+            margin: 10px 0;
+        }
+        .box {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .box:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Immigrant Visas</h1>
+
+        <div class="visa-category">
+            <h2>Family-Sponsored Immigrant Visas</h2>
+            <h3>IR-1: Spouse of a U.S. Citizen</h3>
+            <p><strong>Documents:</strong> Form I-130, marriage certificate, proof of citizenship, birth certificates, police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> U.S. citizen files Form I-130; if approved, NVC processes the case and schedules a visa interview at a U.S. consulate.</p>
+
+            <h3>IR-2: Unmarried Child Under 21 Years of Age of a U.S. Citizen</h3>
+            <p><strong>Documents:</strong> Form I-130, child's birth certificate, proof of parent's citizenship, police certificates (if applicable), medical examination, etc.</p>
+            <p><strong>Application Process:</strong> U.S. citizen files Form I-130; if approved, NVC processes the case and schedules a visa interview at a U.S. consulate.</p>
+
+            <h3>IR-5: Parent of a U.S. Citizen Who is at Least 21 Years Old</h3>
+            <p><strong>Documents:</strong> Form I-130, birth certificate of U.S. citizen, proof of citizenship, police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> U.S. citizen files Form I-130; if approved, NVC processes the case and schedules a visa interview at a U.S. consulate.</p>
+
+            <h3>F1: Unmarried Sons and Daughters of U.S. Citizens</h3>
+            <p><strong>Documents:</strong> Form I-130, birth certificate, proof of parent's citizenship, police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> U.S. citizen files Form I-130; if approved, NVC processes the case and schedules a visa interview at a U.S. consulate.</p>
+        </div>
+
+        <div class="visa-category">
+            <h2>Employment-Based Immigrant Visas</h2>
+            <h3>EB-1: Priority Workers</h3>
+            <p><strong>Documents:</strong> Form I-140, proof of extraordinary ability, employment offer, labor certification (if applicable), police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> Employer or self-petitioner files Form I-140; if approved, case is processed by NVC and scheduled for a visa interview.</p>
+
+            <h3>EB-2: Professionals with Advanced Degrees or Exceptional Ability</h3>
+            <p><strong>Documents:</strong> Form I-140, proof of advanced degree or exceptional ability, labor certification, employment offer, police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> Employer files Form I-140; if approved, case is processed by NVC and scheduled for a visa interview.</p>
+
+            <h3>EB-3: Skilled Workers, Professionals, and Other Workers</h3>
+            <p><strong>Documents:</strong> Form I-140, proof of skills, labor certification, employment offer, police certificates, medical examination, etc.</p>
+            <p><strong>Application Process:</strong> Employer files Form I-140; if approved, case is processed by NVC and scheduled for a visa interview.</p>
+        </div>
+
+        <a href="{{ url_for('visa') }}" class="box">Back to Visa Information</a>
+    </div>
+</body>
+</html>
