@@ -14,32 +14,8 @@ including filling out and editing PDF forms, recording and transcribing voice in
 
 # Project Structure
 
-Immigration_Consulting_Services/
-├── templates/
-│   ├── home.html
-│   ├── visa.html
-│   ├── immigrant_visas.html
-│   ├── non_immigrant_visas.html
-│   ├── client.html
-│   ├── applications.html
-│   ├── edit_pdf.html
-│   ├── voice_to_text.html
-│   └── online_helper.html
-├── static/
-│   ├── style.css
-│   └── log.png
-├── client_applications/
-│   ├── [PDF files will be saved here]
-├── pdf_Application/
-│   ├── [Edited PDF files will be saved here]
-├── Addition_information/
-│   ├── [Additional PDF files]
-├── app.py
-├── translator.py
-├── forms.py
-├── models.py
-├── config.py
-└── requirements.txt
+![image](https://github.com/OlenaTokova/Imigration_Final_project/assets/153076354/447fe5e4-7107-4633-808e-5ad72f16b2e4)
+
 
 # Environment Setup
 
